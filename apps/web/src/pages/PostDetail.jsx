@@ -9,6 +9,7 @@ export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())

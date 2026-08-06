@@ -19,9 +19,7 @@ export default function AppHeader() {
     <header className="site-header">
       <div className="shell header-inner">
         <Link to="/" className="logo">
-          <span className="logo-mark" aria-hidden="true">
-            M
-          </span>
+          <span className="logo-mark" aria-hidden="true"></span>
           <span className="logo-copy">
             <strong>개발 미션 게시판</strong>
           </span>

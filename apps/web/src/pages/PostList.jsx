@@ -3,12 +3,22 @@ import { Link } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const limit = 5;
 
   useEffect(() => {
-    fetch('http://localhost:4100/posts')
-      .then((res) => res.json())
-      .then((data) => setPosts(data));
-  }, []);
+    fetch(`http://localhost:4100/posts?_page=${page}&_limit=${limit}`)
+      .then(async (res) => {
+        const total = res.headers.get('X-Total-Count');
+        if (total) setTotalCount(Number(total));
+        return res.json();
+      })
+      .then((data) => setPosts(data))
+      .catch((err) => console.log(err));
+  }, [page]);
+
+  const totalPages = Math.ceil(totalCount / limit);
 
   return (
     <>
@@ -79,11 +89,17 @@ export default function PostList() {
         <span className="is-disabled" aria-hidden="true">
           <i className="pi pi-chevron-left" />
         </span>
-        <span className="is-static" aria-current="page">
-          1
-        </span>
-        <span className="is-static">2</span>
-        <span className="is-static">3</span>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            className="is-static"
+            aria-current="page"
+            key={p}
+            onClick={() => setPage(p)}
+          >
+            {p}
+          </button>
+        ))}
+
         <span className="is-static" aria-label="다음 페이지">
           <i className="pi pi-chevron-right" aria-hidden="true" />
         </span>
