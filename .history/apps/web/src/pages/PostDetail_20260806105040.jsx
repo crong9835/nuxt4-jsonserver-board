@@ -2,16 +2,15 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function PostDetail() {
   const { id } = useParams();
-  const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
       .then((data) => setPosts(data));
-  }, [id]);
+  }, []);
 
   return (
     <>
@@ -21,38 +20,45 @@ export default function PostDetail() {
       </Link>
 
       <article className="card article-card">
-        {posts
-          .filter((post) => String(post.id) === id)
-          .map((post) => (
-            <div key={post.id}>
-              <h1 className="page-title article-title">{post.title}</h1>
+        <h1 className="page-title article-title">
+          게시판 미션 진행 중 막히는 부분 공유합니다
+        </h1>
 
-              <div className="post-head">
-                <div className="author">
-                  <span className="author-face" aria-hidden="true">
-                    작
-                  </span>
-                  <div>
-                    <div className="author-name">{post.name}</div>
-                    <div className="author-date">2026년 8월 10일 09:02</div>
-                  </div>
-                </div>
-                <div className="stat-row">
-                  <span aria-label="조회 297회">
-                    <i className="pi pi-eye" aria-hidden="true" />
-                    297
-                  </span>
-                  <span aria-label="댓글 2개">
-                    <i className="pi pi-comment" aria-hidden="true" />2
-                  </span>
-                </div>
-              </div>
-
-              <hr className="rule" />
-
-              <div className="post-body">{post.title}</div>
+        <div className="post-head">
+          <div className="author">
+            <span className="author-face" aria-hidden="true">
+              작
+            </span>
+            <div>
+              <div className="author-name">작성자1</div>
+              <div className="author-date">2026년 8월 10일 09:02</div>
             </div>
-          ))}
+          </div>
+          <div className="stat-row">
+            <span aria-label="조회 297회">
+              <i className="pi pi-eye" aria-hidden="true" />
+              297
+            </span>
+            <span aria-label="댓글 2개">
+              <i className="pi pi-comment" aria-hidden="true" />2
+            </span>
+          </div>
+        </div>
+
+        <hr className="rule" />
+
+        <div className="post-body">
+          목록 조회는 됐는데 페이지네이션에서 전체 건수를 어디서 받아야 하는지
+          헷갈렸습니다.
+          {'\n'}
+          정리한 내용을 공유합니다.
+          {'\n\n'}
+          1. 목록은 페이지당 10개씩 보여줍니다.
+          {'\n'}
+          2. 상세로 들어가면 제목, 작성자, 작성일, 본문이 보입니다.
+          {'\n'}
+          3. 작성 / 수정 / 삭제는 같은 폼을 재사용합니다.
+        </div>
 
         <div className="post-actions">
           <Button

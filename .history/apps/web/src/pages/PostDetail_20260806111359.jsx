@@ -50,7 +50,18 @@ export default function PostDetail() {
 
               <hr className="rule" />
 
-              <div className="post-body">{post.title}</div>
+              <div className="post-body">
+                목록 조회는 됐는데 페이지네이션에서 전체 건수를 어디서 받아야
+                하는지 헷갈렸습니다.
+                {'\n'}
+                정리한 내용을 공유합니다.
+                {'\n\n'}
+                1. 목록은 페이지당 10개씩 보여줍니다.
+                {'\n'}
+                2. 상세로 들어가면 제목, 작성자, 작성일, 본문이 보입니다.
+                {'\n'}
+                3. 작성 / 수정 / 삭제는 같은 폼을 재사용합니다.
+              </div>
             </div>
           ))}
 
