@@ -3,6 +3,7 @@ import AppHeader from './components/AppHeader.jsx';
 import PostDetail from './pages/PostDetail.jsx';
 import PostForm from './pages/PostForm.jsx';
 import PostList from './pages/PostList.jsx';
+import PostUpdate from './pages/PostUpdate.jsx';
 
 export default function App() {
   return (
@@ -13,7 +14,7 @@ export default function App() {
           <Route path="/" element={<PostList />} />
           <Route path="/write" element={<PostForm />} />
           <Route path="/posts/:id" element={<PostDetail />} />
-          <Route path="/posts/:id/edit" element={<PostForm />} />
+          <Route path="/posts/:id/edit" element={<PostUpdate />} />
         </Routes>
       </main>
     </BrowserRouter>

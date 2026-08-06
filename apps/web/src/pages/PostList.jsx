@@ -5,7 +5,7 @@ export default function PostList() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const limit = 5;
+  const limit = 10;
 
   useEffect(() => {
     fetch(`http://localhost:4100/posts?_page=${page}&_limit=${limit}`)
@@ -44,7 +44,7 @@ export default function PostList() {
             </button>
           </div>
           <div className="toolbar-meta">
-            <p className="result-count">10개의 글</p>
+            <p className="result-count">{posts.length}개의 글</p>
             <label className="sort-control">
               <span className="sr-only">게시글 정렬</span>
               <select defaultValue="최신순">

@@ -66,7 +66,7 @@ export default function PostDetail() {
 
               <hr className="rule" />
 
-              <div className="post-body">{post.title}</div>
+              <div className="post-body">{post.contents}</div>
             </div>
           ))}
 
