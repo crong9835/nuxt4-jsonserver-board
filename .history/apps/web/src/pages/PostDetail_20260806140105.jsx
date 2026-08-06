@@ -1,13 +1,12 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-
+import { Link, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function PostDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetch('http://localhost:4100/posts')
@@ -18,15 +17,20 @@ export default function PostDetail() {
   const deleteBtn = () => {
     fetch(`http://localhost:4100/posts/${id}`, {
       method: 'DELETE',
-    }).then((res) => {
-      console.log(res);
-      if (res.ok) {
-        alert('삭제완료');
-        navigate('/'); // 홈으로 이동
-      } else {
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.ok) {
+          alert('삭제완료');
+          navigate('/'); // 홈으로 이동
+        } else {
+          alert('삭제실패');
+        }
+      })
+      .catch((error) => {
+        console.error('에러 발생:', error);
         alert('삭제실패');
-      }
-    });
+      });
   };
   return (
     <>
