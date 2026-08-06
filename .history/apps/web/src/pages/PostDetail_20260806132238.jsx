@@ -1,7 +1,7 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function PostDetail() {
@@ -14,21 +14,21 @@ export default function PostDetail() {
   }, [id]);
 
   const deleteBtn = () => {
-    fetch(`http://localhost:4100/posts/${id}`, {
+    // 라우터(v5 기준)에서 id를 받아오는 예시입니다.
+    const id = props.match.params.id;
+
+    fetch('http://localhost:4100/' + id, {
       method: 'DELETE',
     })
+      .then((res) => res.text())
       .then((res) => {
         console.log(res);
-        if (res.ok) {
+        if (res === 'ok') {
           alert('삭제완료');
-          navigate('/'); // 홈으로 이동
+          props.history.push('/');
         } else {
           alert('삭제실패');
         }
-      })
-      .catch((error) => {
-        console.error('에러 발생:', error);
-        alert('삭제실패');
       });
   };
   return (

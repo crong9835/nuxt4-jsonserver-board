@@ -5,15 +5,15 @@ export default function AppHeader() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  function handleSearchSubmit(event) {
-    event.preventDefault();
-    const query = new FormData(event.currentTarget).get('q');
-    const nextParams = new URLSearchParams();
-    if (query) {
-      nextParams.set('q', query);
-    }
-    navigate(nextParams.toString() ? `/?${nextParams.toString()}` : '/');
-  }
+  // function handleSearchSubmit(event) {
+  //   event.preventDefault();
+  //   const query = new FormData(event.currentTarget).get('q');
+  //   const nextParams = new URLSearchParams();
+  //   if (query) {
+  //     nextParams.set('q', query);
+  //   }
+  //   navigate(nextParams.toString() ? `/?${nextParams.toString()}` : '/');
+  // }
 
   return (
     <header className="site-header">

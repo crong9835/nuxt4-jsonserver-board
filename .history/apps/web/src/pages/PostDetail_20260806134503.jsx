@@ -1,11 +1,12 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import { useEffect, useState } from 'react';
 
 export default function PostDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetch('http://localhost:4100/posts')

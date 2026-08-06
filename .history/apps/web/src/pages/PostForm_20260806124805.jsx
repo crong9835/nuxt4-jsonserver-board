@@ -3,40 +3,40 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function PostForm() {
   const navigate = useNavigate();
 
   const [post, setPosts] = useState({
     title: '',
-    name: '',
+    createdBy: '',
     contents: '',
   });
 
-  const { title, name, contents } = post;
+  const { title, createdBy, contents } = post; //비구조화 할당
 
   const onChange = (event) => {
-    const { value, name } = event.target;
-    setPosts({
-      ...post,
+    const { value, name } = event.target; //event.target에서 name과 value만 가져오기
+    setBoard({
+      ...board,
       [name]: value,
     });
   };
 
-  const savepost = async () => {
+  const saveBoard = async () => {
     try {
       const response = await fetch('http://localhost:4100/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(post),
+        body: JSON.stringify(board),
       });
 
       if (response.ok) {
         alert('등록되었습니다.');
-        navigate('/');
+        navigate('/board');
       } else {
         alert('등록에 실패했습니다.');
       }
@@ -44,6 +44,10 @@ export default function PostForm() {
       console.error('에러 발생:', error);
     }
   };
+
+  // const backToList = () => {
+  //   navigate('/');
+  // };
 
   return (
     <>
@@ -72,9 +76,6 @@ export default function PostForm() {
             </label>
             <InputText
               id="title"
-              name="title"
-              value={title}
-              onChange={onChange}
               placeholder="예: 페이지네이션 쿼리는 어떻게 넘기시나요?"
               aria-describedby="title-count"
             />
@@ -94,9 +95,6 @@ export default function PostForm() {
             </label>
             <InputText
               id="author"
-              name="name"
-              value={name}
-              onChange={onChange}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"
             />
@@ -116,9 +114,6 @@ export default function PostForm() {
             </label>
             <InputTextarea
               id="content"
-              name="contents"
-              value={contents}
-              onChange={onChange}
               rows={12}
               placeholder="막힌 부분, 시도해본 방법, 궁금한 점을 차례로 적어보세요"
               aria-describedby="content-count"
@@ -135,11 +130,11 @@ export default function PostForm() {
               작성 취소
             </Link>
             <Button
-              onClick={savepost}
               type="button"
               label="글 등록"
               className="btn-xl"
               icon="pi pi-check"
+              disabled
             />
           </div>
         </form>

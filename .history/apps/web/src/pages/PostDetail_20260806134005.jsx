@@ -1,16 +1,22 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+
+import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 export default function PostDetail() {
   const { id } = useParams();
-  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate(); // 1. navigate 선언 추가
+  const [post, setPost] = useState(null); // 2. 단일 객체 상태로 변경
+
   useEffect(() => {
-    fetch('http://localhost:4100/posts')
+    // 3. 특정 id의 게시글만 가져오도록 수정 (서버 지원 여부에 따름)
+    fetch(`http://localhost:4100/posts/${id}`)
       .then((res) => res.json())
-      .then((data) => setPosts(data));
+      .then((data) => setPost(data));
   }, [id]);
 
   const deleteBtn = () => {
@@ -18,10 +24,9 @@ export default function PostDetail() {
       method: 'DELETE',
     })
       .then((res) => {
-        console.log(res);
         if (res.ok) {
           alert('삭제완료');
-          navigate('/'); // 홈으로 이동
+          navigate('/');
         } else {
           alert('삭제실패');
         }

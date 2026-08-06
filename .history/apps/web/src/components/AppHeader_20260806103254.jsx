@@ -1,30 +1,26 @@
-import { InputText } from 'primereact/inputtext';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { InputText } from 'primereact/inputtext'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 export default function AppHeader() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   function handleSearchSubmit(event) {
-    event.preventDefault();
-    const query = new FormData(event.currentTarget).get('q');
-    const nextParams = new URLSearchParams();
+    event.preventDefault()
+    const query = new FormData(event.currentTarget).get('q')
+    const nextParams = new URLSearchParams()
     if (query) {
-      nextParams.set('q', query);
+      nextParams.set('q', query)
     }
-    navigate(nextParams.toString() ? `/?${nextParams.toString()}` : '/');
+    navigate(nextParams.toString() ? `/?${nextParams.toString()}` : '/')
   }
 
   return (
     <header className="site-header">
       <div className="shell header-inner">
         <Link to="/" className="logo">
-          <span className="logo-mark" aria-hidden="true">
-            M
-          </span>
-          <span className="logo-copy">
-            <strong>개발 미션 게시판</strong>
-          </span>
+          <span className="logo-mark" aria-hidden="true">M</span>
+          <span className="logo-copy"><strong>개발 미션 게시판</strong></span>
         </Link>
 
         <div className="header-actions">
@@ -45,5 +41,5 @@ export default function AppHeader() {
         </div>
       </div>
     </header>
-  );
+  )
 }

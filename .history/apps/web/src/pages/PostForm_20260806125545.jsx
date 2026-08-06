@@ -3,7 +3,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function PostForm() {
   const navigate = useNavigate();
@@ -44,6 +44,10 @@ export default function PostForm() {
       console.error('에러 발생:', error);
     }
   };
+
+  // const backToList = () => {
+  //   navigate('/');
+  // };
 
   return (
     <>
@@ -94,8 +98,8 @@ export default function PostForm() {
             </label>
             <InputText
               id="author"
-              name="name"
-              value={name}
+              name="createdBy"
+              value={createdBy}
               onChange={onChange}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"

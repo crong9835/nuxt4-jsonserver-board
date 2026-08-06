@@ -3,21 +3,21 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function PostForm() {
   const navigate = useNavigate();
 
   const [post, setPosts] = useState({
     title: '',
-    name: '',
+    createdBy: '',
     contents: '',
   });
 
-  const { title, name, contents } = post;
+  const { title, createdBy, contents } = post; //비구조화 할당
 
   const onChange = (event) => {
-    const { value, name } = event.target;
+    const { value, name } = event.target; //event.target에서 name과 value만 가져오기
     setPosts({
       ...post,
       [name]: value,
@@ -44,6 +44,10 @@ export default function PostForm() {
       console.error('에러 발생:', error);
     }
   };
+
+  // const backToList = () => {
+  //   navigate('/');
+  // };
 
   return (
     <>
@@ -94,8 +98,8 @@ export default function PostForm() {
             </label>
             <InputText
               id="author"
-              name="name"
-              value={name}
+              name="createdBy"
+              value={createdBy}
               onChange={onChange}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"

@@ -45,6 +45,10 @@ export default function PostForm() {
     }
   };
 
+  // const backToList = () => {
+  //   navigate('/');
+  // };
+
   return (
     <>
       <Link to="/" className="back-link is-static">
@@ -94,8 +98,8 @@ export default function PostForm() {
             </label>
             <InputText
               id="author"
-              name="name"
-              value={name}
+              name="createdBy"
+              value={createdBy}
               onChange={onChange}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"

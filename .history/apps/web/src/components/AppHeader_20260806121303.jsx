@@ -38,7 +38,7 @@ export default function AppHeader() {
               defaultValue={searchParams.get('q') ?? ''}
             />
           </form>
-          <Link to="/write" className="p-button header-write">
+          <Link to="/PostForm" className="p-button header-write">
             <i className="pi pi-plus" aria-hidden="true" />
             <span>글쓰기</span>
           </Link>

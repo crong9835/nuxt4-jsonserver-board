@@ -1,7 +1,7 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, usenavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function PostDetail() {

@@ -45,6 +45,10 @@ export default function PostForm() {
     }
   };
 
+  const backToList = () => {
+    navigate('/');
+  };
+
   return (
     <>
       <Link to="/" className="back-link is-static">

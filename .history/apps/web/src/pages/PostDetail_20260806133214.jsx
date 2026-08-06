@@ -1,7 +1,7 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function PostDetail() {
@@ -18,7 +18,6 @@ export default function PostDetail() {
       method: 'DELETE',
     })
       .then((res) => {
-        console.log(res);
         if (res.ok) {
           alert('삭제완료');
           navigate('/'); // 홈으로 이동

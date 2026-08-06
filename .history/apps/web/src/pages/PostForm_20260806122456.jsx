@@ -2,59 +2,28 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function PostForm() {
-  const navigate = useNavigate();
-
-  const [post, setPosts] = useState({
-    title: '',
-    name: '',
-    contents: '',
-  });
-
-  const { title, name, contents } = post;
-
-  const onChange = (event) => {
-    const { value, name } = event.target;
-    setPosts({
-      ...post,
-      [name]: value,
-    });
-  };
-
-  const savepost = async () => {
-    try {
-      const response = await fetch('http://localhost:4100/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(post),
-      });
-
-      if (response.ok) {
-        alert('등록되었습니다.');
-        navigate('/');
-      } else {
-        alert('등록에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('에러 발생:', error);
-    }
-  };
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+  // const [title, setTitle] = useState('');
+  // const [content, setContent] = useState('');
+  // const navigate = useNavigate();
 
   return (
     <>
-      <Link to="/" className="back-link is-static">
+      <Link to="/" className="back-link">
         <i className="pi pi-chevron-left" aria-hidden="true" />
         전체 글로
       </Link>
 
       <section className="page-intro page-intro--compact">
         <div>
-          <h1 className="page-title">새 글 작성</h1>
+          <h1 className="page-title">
+            {isEditMode ? '글 수정' : '새 글 작성'}
+          </h1>
           <p className="page-description">
             질문이나 해결 방법을 작성하면 목록에 바로 보여요.
           </p>
@@ -72,9 +41,6 @@ export default function PostForm() {
             </label>
             <InputText
               id="title"
-              name="title"
-              value={title}
-              onChange={onChange}
               placeholder="예: 페이지네이션 쿼리는 어떻게 넘기시나요?"
               aria-describedby="title-count"
             />
@@ -94,9 +60,6 @@ export default function PostForm() {
             </label>
             <InputText
               id="author"
-              name="name"
-              value={name}
-              onChange={onChange}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"
             />
@@ -116,9 +79,6 @@ export default function PostForm() {
             </label>
             <InputTextarea
               id="content"
-              name="contents"
-              value={contents}
-              onChange={onChange}
               rows={12}
               placeholder="막힌 부분, 시도해본 방법, 궁금한 점을 차례로 적어보세요"
               aria-describedby="content-count"
@@ -131,15 +91,15 @@ export default function PostForm() {
           </div>
 
           <div className="form-footer">
-            <Link to="/" className="p-button p-button-help btn-xl is-static">
+            <Link to="/" className="p-button p-button-help btn-xl">
               작성 취소
             </Link>
             <Button
-              onClick={savepost}
               type="button"
-              label="글 등록"
+              label={isEditMode ? '글 수정' : '글 등록'}
               className="btn-xl"
               icon="pi pi-check"
+              disabled
             />
           </div>
         </form>
