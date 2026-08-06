@@ -1,14 +1,17 @@
 import { Button } from 'primereact/button'
 import { Dialog } from 'primereact/dialog'
 import { InputTextarea } from 'primereact/inputtextarea'
+import { Link, useParams } from 'react-router-dom'
 
 export default function PostDetail() {
+  const { id } = useParams()
+
   return (
     <>
-      <span className="back-link is-static">
+      <Link to="/" className="back-link">
         <i className="pi pi-chevron-left" aria-hidden="true" />
         전체 글로
-      </span>
+      </Link>
 
       <article className="card article-card">
         <h1 className="page-title article-title">게시판 미션 진행 중 막히는 부분 공유합니다</h1>
@@ -49,10 +52,10 @@ export default function PostDetail() {
 
         <div className="post-actions">
           <Button type="button" label="글 삭제" severity="danger" icon="pi pi-trash" className="is-static" />
-          <span className="p-button p-button-secondary is-static">
+          <Link to={`/posts/${id}/edit`} className="p-button p-button-secondary">
             <i className="pi pi-pencil" aria-hidden="true" />
             <span>글 수정</span>
-          </span>
+          </Link>
         </div>
       </article>
 

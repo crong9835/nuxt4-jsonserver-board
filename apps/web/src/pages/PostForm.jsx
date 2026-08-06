@@ -2,18 +2,22 @@ import { Button } from 'primereact/button'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { InputTextarea } from 'primereact/inputtextarea'
+import { Link, useParams } from 'react-router-dom'
 
 export default function PostForm() {
+  const { id } = useParams()
+  const isEditMode = Boolean(id)
+
   return (
     <>
-      <span className="back-link is-static">
+      <Link to="/" className="back-link">
         <i className="pi pi-chevron-left" aria-hidden="true" />
         전체 글로
-      </span>
+      </Link>
 
       <section className="page-intro page-intro--compact">
         <div>
-          <h1 className="page-title">새 글 작성</h1>
+          <h1 className="page-title">{isEditMode ? '글 수정' : '새 글 작성'}</h1>
           <p className="page-description">질문이나 해결 방법을 작성하면 목록에 바로 보여요.</p>
         </div>
       </section>
@@ -67,8 +71,8 @@ export default function PostForm() {
           </div>
 
           <div className="form-footer">
-            <span className="p-button p-button-help btn-xl is-static">작성 취소</span>
-            <Button type="button" label="글 등록" className="btn-xl" icon="pi pi-check" disabled />
+            <Link to="/" className="p-button p-button-help btn-xl">작성 취소</Link>
+            <Button type="button" label={isEditMode ? '글 수정' : '글 등록'} className="btn-xl" icon="pi pi-check" disabled />
           </div>
         </form>
 

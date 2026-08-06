@@ -1,14 +1,42 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, []);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const currentNotice = searchParams.get('notice') === 'true';
+  const currentSort = searchParams.get('sort') || '최신순';
+
+  function updateParams(changes) {
+    const nextParams = new URLSearchParams(searchParams);
+    Object.entries(changes).forEach(([key, value]) => {
+      if (value === null || value === '') {
+        nextParams.delete(key);
+      } else {
+        nextParams.set(key, value);
+      }
+    });
+    setSearchParams(nextParams);
+  }
+
+  function pageHref(pageNumber) {
+    const nextParams = new URLSearchParams(searchParams);
+    if (pageNumber <= 1) {
+      nextParams.delete('page');
+    } else {
+      nextParams.set('page', String(pageNumber));
+    }
+    const query = nextParams.toString();
+    return query ? `/?${query}` : '/';
+  }
 
   return (
     <>
@@ -34,7 +62,7 @@ export default function PostList() {
             </button>
           </div>
           <div className="toolbar-meta">
-            <p className="result-count">10개의 글</p>
+            <p className="result-count">{post.length}개의 글</p>
             <label className="sort-control">
               <span className="sr-only">게시글 정렬</span>
               <select defaultValue="최신순">
@@ -75,18 +103,31 @@ export default function PostList() {
           </ul>
         </div>
       </section>
+
       <div className="pager" aria-label="페이지 이동 UI">
-        <span className="is-disabled" aria-hidden="true">
-          <i className="pi pi-chevron-left" />
-        </span>
-        <span className="is-static" aria-current="page">
-          1
-        </span>
-        <span className="is-static">2</span>
-        <span className="is-static">3</span>
-        <span className="is-static" aria-label="다음 페이지">
+        {currentPage <= 1 ? (
+          <span className="is-disabled" aria-hidden="true">
+            <i className="pi pi-chevron-left" />
+          </span>
+        ) : (
+          <Link to={pageHref(currentPage - 1)} aria-label="이전 페이지">
+            <i className="pi pi-chevron-left" aria-hidden="true" />
+          </Link>
+        )}
+
+        {[1, 2, 3].map((pageNumber) => (
+          <Link
+            key={pageNumber}
+            to={pageHref(pageNumber)}
+            aria-current={pageNumber === currentPage ? 'page' : undefined}
+          >
+            {pageNumber}
+          </Link>
+        ))}
+
+        <Link to={pageHref(currentPage + 1)} aria-label="다음 페이지">
           <i className="pi pi-chevron-right" aria-hidden="true" />
-        </span>
+        </Link>
       </div>
     </>
   );

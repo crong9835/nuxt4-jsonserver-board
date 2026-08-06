@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
-
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
@@ -34,7 +32,7 @@ export default function PostList() {
             </button>
           </div>
           <div className="toolbar-meta">
-            <p className="result-count">10개의 글</p>
+            <p className="result-count">{posts.length}개의 글</p>
             <label className="sort-control">
               <span className="sr-only">게시글 정렬</span>
               <select defaultValue="최신순">
@@ -52,9 +50,7 @@ export default function PostList() {
               <li key={post.id} className="post-item">
                 <div className="post-item-body">
                   <div className="post-item-head">
-                    <Link to={`/posts/${post.id}`} className="post-item-title">
-                      {post.title}
-                    </Link>
+                    <h2 className="post-item-title">{post.title}</h2>
                   </div>
                   <div className="post-item-meta">
                     <span className="post-author">{post.name}</span>
@@ -75,6 +71,7 @@ export default function PostList() {
           </ul>
         </div>
       </section>
+
       <div className="pager" aria-label="페이지 이동 UI">
         <span className="is-disabled" aria-hidden="true">
           <i className="pi pi-chevron-left" />

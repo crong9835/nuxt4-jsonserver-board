@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     fetch('http://localhost:4100/posts')
@@ -75,18 +76,31 @@ export default function PostList() {
           </ul>
         </div>
       </section>
+
       <div className="pager" aria-label="페이지 이동 UI">
-        <span className="is-disabled" aria-hidden="true">
-          <i className="pi pi-chevron-left" />
-        </span>
-        <span className="is-static" aria-current="page">
-          1
-        </span>
-        <span className="is-static">2</span>
-        <span className="is-static">3</span>
-        <span className="is-static" aria-label="다음 페이지">
+        {currentPage <= 1 ? (
+          <span className="is-disabled" aria-hidden="true">
+            <i className="pi pi-chevron-left" />
+          </span>
+        ) : (
+          <Link to={pageHref(currentPage - 1)} aria-label="이전 페이지">
+            <i className="pi pi-chevron-left" aria-hidden="true" />
+          </Link>
+        )}
+
+        {[1, 2, 3].map((pageNumber) => (
+          <Link
+            key={pageNumber}
+            to={pageHref(pageNumber)}
+            aria-current={pageNumber === currentPage ? 'page' : undefined}
+          >
+            {pageNumber}
+          </Link>
+        ))}
+
+        <Link to={pageHref(currentPage + 1)} aria-label="다음 페이지">
           <i className="pi pi-chevron-right" aria-hidden="true" />
-        </span>
+        </Link>
       </div>
     </>
   );

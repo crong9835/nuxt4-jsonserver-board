@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
-
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, []);
-
   return (
     <>
       <section className="page-intro" aria-labelledby="board-title">
@@ -48,33 +45,56 @@ export default function PostList() {
 
         <div className="card card--list">
           <ul className="post-list">
-            {posts.map((post) => (
-              <li key={post.id} className="post-item">
-                <div className="post-item-body">
-                  <div className="post-item-head">
-                    <Link to={`/posts/${post.id}`} className="post-item-title">
-                      {post.title}
-                    </Link>
-                  </div>
-                  <div className="post-item-meta">
-                    <span className="post-author">{post.name}</span>
-                    <span className="sep" />
-                    <span>8월 12일</span>
-                    <span className="sep" />
-                    <span>조회 351</span>
-                  </div>
+            <li className="post-item is-notice">
+              <div className="post-item-body">
+                <div className="post-item-head">
+                  <span className="pill-notice">공지</span>
+
+                  {posts.map((post) => (
+                     <div className="card card--list">
+          <ul className="post-list">
+            <li className="post-item is-notice">
+              <div className="post-item-body">
+                <div className="post-item-head">
+                  <span className="pill-notice">공지</span>
+                  <h2 className="post-item-title"><span>공지사항 먼저 읽고 미션 시작해주세요</span></h2>
                 </div>
-                <div className="post-item-side">
-                  <span className="reply-count">
-                    <i className="pi pi-comment" aria-hidden="true" />
-                    <span className="sr-only">댓글 </span>0
-                  </span>
+                <div className="post-item-meta">
+                  <span className="post-author">운영자</span>
+                  <span className="sep" />
+                  <span>8월 12일</span>
+                  <span className="sep" />
+                  <span>조회 351</span>
                 </div>
-              </li>
-            ))}
+              </div>
+              <div className="post-item-side">
+                <span className="reply-count">
+                  <i className="pi pi-comment" aria-hidden="true" />
+                  <span className="sr-only">댓글 </span>
+                  0
+                </span>
+              </div>
+                  ))}
+                </div>
+                <div className="post-item-meta">
+                  <span className="post-author">운영자</span>
+                  <span className="sep" />
+                  <span>8월 12일</span>
+                  <span className="sep" />
+                  <span>조회 351</span>
+                </div>
+              </div>
+              <div className="post-item-side">
+                <span className="reply-count">
+                  <i className="pi pi-comment" aria-hidden="true" />
+                  <span className="sr-only">댓글 </span>0
+                </span>
+              </div>
+            </li>
           </ul>
         </div>
       </section>
+
       <div className="pager" aria-label="페이지 이동 UI">
         <span className="is-disabled" aria-hidden="true">
           <i className="pi pi-chevron-left" />
