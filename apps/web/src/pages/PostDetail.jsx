@@ -9,12 +9,20 @@ export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, [id]);
+
+  useEffect(() => {
+    fetch('http://localhost:4100/comments')
+      .then((res) => res.json())
+      .then((data) => setComments(data))
+      .catch((err) => console.error('댓글 로딩 실패:', err));
+  }, []);
 
   const deleteBtn = () => {
     fetch(`http://localhost:4100/posts/${id}`, {
@@ -59,7 +67,8 @@ export default function PostDetail() {
                     297
                   </span>
                   <span aria-label="댓글 2개">
-                    <i className="pi pi-comment" aria-hidden="true" />2
+                    <i className="pi pi-comment" aria-hidden="true" />
+                    {comments.length}
                   </span>
                 </div>
               </div>
@@ -92,41 +101,30 @@ export default function PostDetail() {
       <section className="card comments-card">
         <div className="section-heading">
           <div>
-            <h2 className="section-title">댓글 2개</h2>
+            <h2 className="section-title">댓글 {comments.length}개</h2>
             <p>답변이나 참고 자료를 나누면 더 빨리 해결할 수 있어요.</p>
           </div>
         </div>
+        {comments.map((comment) => (
+          <ul key={comment.id} className="comment-list">
+            <li className="comment">
+              <span className="comment-face" aria-hidden="true">
+                작
+              </span>
 
-        <ul className="comment-list">
-          <li className="comment">
-            <span className="comment-face" aria-hidden="true">
-              작
-            </span>
-            <div>
-              <div className="author-name">
-                작성자2
-                <span className="author-date comment-when">8월 10일 10:12</span>
+              <div>
+                <div className="author-name">
+                  {comment.name}
+
+                  <span className="author-date comment-when">
+                    8월 10일 10:12
+                  </span>
+                </div>
+                <p className="comment-text">{comment.content}</p>
               </div>
-              <p className="comment-text">
-                저도 같은 부분에서 막혔는데 덕분에 해결했습니다. 감사합니다!
-              </p>
-            </div>
-          </li>
-          <li className="comment">
-            <span className="comment-face" aria-hidden="true">
-              작
-            </span>
-            <div>
-              <div className="author-name">
-                작성자5
-                <span className="author-date comment-when">8월 10일 11:40</span>
-              </div>
-              <p className="comment-text">
-                페이지네이션은 쿼리 파라미터로 넘기면 편해요.
-              </p>
-            </div>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        ))}
 
         <form className="comment-form field">
           <label className="field-label" htmlFor="comment">

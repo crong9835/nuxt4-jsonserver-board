@@ -67,5 +67,9 @@
       "contents": "ㅎㅎㅎ"
     }
   ],
-  "comments": []
+  "comments": [
+    { "id": 1, "name": "ㅎㅎ", "content": "첫 번째 댓글입니다." },
+    { "id": 2, "name": "zz", "content": "두번째 댓글입니다." },
+    { "id": 3, "name": "gg", "content": "세번째 댓글입니다." }
+  ]
 }
