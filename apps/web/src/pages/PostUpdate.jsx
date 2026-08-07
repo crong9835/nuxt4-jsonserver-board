@@ -3,27 +3,33 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function PostUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [title, setTitle] = useState('');
+  const [name, setName] = useState('');
+  const [contents, setContents] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const [post, setPosts] = useState({
-    title: '',
-    name: '',
-    contents: '',
-  });
+  useEffect(() => {
+    async function fetchPost() {
+      const response = await fetch(`http://localhost:4100/posts/${id}`);
+      if (response.ok === false) {
+        console.log('게시글불러오기 실패');
+        setLoading(false);
+        return;
+      }
+      const data = await response.json();
 
-  const { title, name, contents } = post;
-
-  const onChange = (event) => {
-    const { value, name } = event.target;
-    setPosts({
-      ...post,
-      [name]: value,
-    });
-  };
+      setTitle(data.title);
+      setName(data.name);
+      setContents(data.contents);
+      setLoading(false);
+    }
+    fetchPost();
+  }, [id]);
 
   const updatePost = async () => {
     await fetch(`http://localhost:4100/posts/${id}`, {
@@ -31,7 +37,11 @@ export default function PostUpdate() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(post),
+      body: JSON.stringify({
+        title: title,
+        name: name,
+        contents: contents,
+      }),
     }).then((res) => {
       if (res.ok) {
         alert('수정되었습니다.');
@@ -49,7 +59,7 @@ export default function PostUpdate() {
 
       <section className="page-intro page-intro--compact">
         <div>
-          <h1 className="page-title">새 글 작성</h1>
+          <h1 className="page-title">게시글 수정</h1>
           <p className="page-description">
             질문이나 해결 방법을 작성하면 목록에 바로 보여요.
           </p>
@@ -69,7 +79,9 @@ export default function PostUpdate() {
               id="title"
               name="title"
               value={title}
-              onChange={onChange}
+              onChange={function (event) {
+                setTitle(event.target.value);
+              }}
               placeholder="예: 페이지네이션 쿼리는 어떻게 넘기시나요?"
               aria-describedby="title-count"
             />
@@ -91,7 +103,9 @@ export default function PostUpdate() {
               id="author"
               name="name"
               value={name}
-              onChange={onChange}
+              onChange={function (event) {
+                setName(event.target.value);
+              }}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"
             />
@@ -113,7 +127,9 @@ export default function PostUpdate() {
               id="content"
               name="contents"
               value={contents}
-              onChange={onChange}
+              onChange={function (event) {
+                setContents(event.target.value);
+              }}
               rows={12}
               placeholder="막힌 부분, 시도해본 방법, 궁금한 점을 차례로 적어보세요"
               aria-describedby="content-count"
@@ -127,12 +143,12 @@ export default function PostUpdate() {
 
           <div className="form-footer">
             <Link to="/" className="p-button p-button-help btn-xl is-static">
-              작성 취소
+              수정 취소
             </Link>
             <Button
               onClick={updatePost}
               type="button"
-              label="글 등록"
+              label="글 수정"
               className="btn-xl"
               icon="pi pi-check"
             />
