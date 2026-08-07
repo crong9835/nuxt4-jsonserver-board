@@ -9,14 +9,17 @@ export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState([]);
-
+  const [comments, setComments] = useState({
+    name: '',
+    contents: '',
+  });
+  // 게시글 가져오기
   useEffect(() => {
     fetch('http://localhost:4100/posts')
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, [id]);
-
+  // 댓글가져오기
   useEffect(() => {
     fetch('http://localhost:4100/comments')
       .then((res) => res.json())
@@ -24,6 +27,7 @@ export default function PostDetail() {
       .catch((err) => console.error('댓글 로딩 실패:', err));
   }, []);
 
+  // 게시글 삭제
   const deleteBtn = () => {
     fetch(`http://localhost:4100/posts/${id}`, {
       method: 'DELETE',
@@ -31,12 +35,45 @@ export default function PostDetail() {
       console.log(res);
       if (res.ok) {
         alert('삭제완료');
-        navigate('/'); // 홈으로 이동
+        navigate('/');
       } else {
         alert('삭제실패');
       }
     });
   };
+
+  // 댓글쓰기
+  const { name, contents } = comments;
+
+  const onChange = (event) => {
+    const { value, name } = event.target;
+    setComments({
+      ...comments,
+      [name]: value,
+    });
+  };
+
+  const saveComments = async () => {
+    try {
+      const response = await fetch('http://localhost:4100/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(comments),
+      });
+
+      if (response.ok) {
+        alert('등록되었습니다.');
+        navigate('/');
+      } else {
+        alert('등록에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('에러 발생:', error);
+    }
+  };
+
   return (
     <>
       <Link to="/" className="back-link">
@@ -134,9 +171,11 @@ export default function PostDetail() {
             id="comment"
             rows={3}
             placeholder="해결 방법이나 참고 자료를 알려주세요"
+            value={contents}
+            onChange={onChange}
           />
           <div className="row-end">
-            <Button type="button" label="댓글 등록" disabled />
+            <Button onClick={saveComments} type="button" label="댓글 등록" />
           </div>
         </form>
       </section>
