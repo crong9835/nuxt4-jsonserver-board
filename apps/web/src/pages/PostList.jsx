@@ -1,24 +1,31 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const limit = 10;
+  const totalPages = Math.ceil(totalCount / limit);
 
   useEffect(() => {
-    fetch(`http://localhost:4100/posts?_page=${page}&_limit=${limit}`)
-      .then(async (res) => {
+    fetch(`http://localhost:4100/posts?_page=${page}&_per_page=${limit}`)
+      .then((res) => {
         const total = res.headers.get('X-Total-Count');
         if (total) setTotalCount(Number(total));
         return res.json();
       })
-      .then((data) => setPosts(data))
-      .catch((err) => console.log(err));
+      .then((data) => {
+        setPosts(data.data);
+        setTotalCount(data.items);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [page]);
-
-  const totalPages = Math.ceil(totalCount / limit);
+  // console.log('totalcount:', totalCount);
 
   return (
     <>
