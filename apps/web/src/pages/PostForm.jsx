@@ -31,7 +31,12 @@ export default function PostForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(post),
+        body: JSON.stringify({
+          ...post,
+          createdAt: new Date().toISOString(),
+          views: 0,
+          isNotice: false,
+        }),
       });
 
       if (response.ok) {

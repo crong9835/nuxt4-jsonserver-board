@@ -5,41 +5,86 @@ import { ContentState, PostListSkeleton } from '../components/ContentState.jsx';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const limit = 10;
-  const totalPages = Math.ceil(totalCount / limit);
+
+  const keyword = searchParams.get('q') || '';
+  const page = Number(searchParams.get('page') || 1);
+  const notice = searchParams.get('notice') || 'all';
+  const sort = searchParams.get('sort') || 'latest';
 
   useEffect(() => {
     setLoading(true);
     setError(false);
-    fetch(`http://localhost:4100/posts?_page=${page}&_per_page=${limit}`)
-      .then((res) => {
-        const total = res.headers.get('X-Total-Count');
-        if (total) setTotalCount(Number(total));
-        return res.json();
-      })
+    fetch('http://localhost:4100/posts')
+      .then((res) => res.json())
       .then((data) => {
-        setPosts(data.data);
-        setTotalCount(data.items);
+        setPosts(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setError(true);
         setLoading(false);
       });
-  }, [page]);
-  // console.log('totalcount:', totalCount);
+  }, []);
+
+  const searched = posts.filter((post) => {
+    const word = keyword.toLowerCase();
+    const title = (post.title || '').toLowerCase();
+    const contents = (post.contents || '').toLowerCase();
+    return title.includes(word) || contents.includes(word);
+  });
+
+  const filtered = searched.filter((post) => {
+    if (notice === 'notice') {
+      return post.isNotice === true;
+    }
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === 'views') {
+      return b.views - a.views;
+    }
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  const totalCount = sorted.length;
+  const totalPages = Math.ceil(totalCount / limit);
+  const pagePosts = sorted.slice((page - 1) * limit, page * limit);
+
+  const formatDate = (value) => {
+    const date = new Date(value);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
+  const goPage = (nextPage) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('page', nextPage);
+    setSearchParams(nextParams);
+  };
+
+  const goNotice = (value) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('notice', value);
+    nextParams.delete('page');
+    setSearchParams(nextParams);
+  };
+
+  const goSort = (value) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('sort', value);
+    nextParams.delete('page');
+    setSearchParams(nextParams);
+  };
 
   // 목록 보여주기
   let listContent = (
     <ul className="post-list">
-      {posts.map((post) => (
+      {pagePosts.map((post) => (
         <li key={post.id} className="post-item">
           <div className="post-item-body">
             <div className="post-item-head">
@@ -50,9 +95,9 @@ export default function PostList() {
             <div className="post-item-meta">
               <span className="post-author">{post.name}</span>
               <span className="sep" />
-              <span>8월 12일</span>
+              <span>{formatDate(post.createdAt)}</span>
               <span className="sep" />
-              <span>조회 351</span>
+              <span>조회 {post.views}</span>
             </div>
           </div>
           <div className="post-item-side">
@@ -66,14 +111,24 @@ export default function PostList() {
     </ul>
   );
 
-  if (posts.length === 0) {
-    listContent = (
-      <ContentState
-        icon="pi-inbox"
-        title="등록된 글이 없습니다"
-        description="첫 글을 작성해보세요"
-      />
-    );
+  if (sorted.length === 0) {
+    if (keyword) {
+      listContent = (
+        <ContentState
+          icon="pi-search"
+          title="검색 결과가 없습니다"
+          description={`'${keyword}'와 일치하는 글이 없습니다`}
+        />
+      );
+    } else {
+      listContent = (
+        <ContentState
+          icon="pi-inbox"
+          title="등록된 글이 없습니다"
+          description="첫 글을 작성해보세요"
+        />
+      );
+    }
   }
 
   if (error) {
@@ -107,20 +162,33 @@ export default function PostList() {
       <section className="board-panel" aria-label="게시글 목록">
         <div className="board-toolbar">
           <div className="tabs" role="group" aria-label="게시글 필터">
-            <button type="button" className="tab is-active" aria-pressed="true">
+            <button
+              type="button"
+              className={notice === 'all' ? 'tab is-active' : 'tab'}
+              aria-pressed={notice === 'all'}
+              onClick={() => goNotice('all')}
+            >
               전체
             </button>
-            <button type="button" className="tab" aria-pressed="false">
+            <button
+              type="button"
+              className={notice === 'notice' ? 'tab is-active' : 'tab'}
+              aria-pressed={notice === 'notice'}
+              onClick={() => goNotice('notice')}
+            >
               공지
             </button>
           </div>
           <div className="toolbar-meta">
-            <p className="result-count">{posts.length}개의 글</p>
+            <p className="result-count">{totalCount}개의 글</p>
             <label className="sort-control">
               <span className="sr-only">게시글 정렬</span>
-              <select defaultValue="최신순">
-                <option>최신순</option>
-                <option>조회순</option>
+              <select
+                value={sort}
+                onChange={(event) => goSort(event.target.value)}
+              >
+                <option value="latest">최신순</option>
+                <option value="views">조회순</option>
               </select>
               <i className="pi pi-chevron-down" aria-hidden="true" />
             </label>
@@ -130,23 +198,36 @@ export default function PostList() {
         <div className="card card--list">{listContent}</div>
       </section>
       <div className="pager" aria-label="페이지 이동 UI">
-        <span className="is-disabled" aria-hidden="true">
-          <i className="pi pi-chevron-left" />
-        </span>
+        <button
+          type="button"
+          className={page <= 1 ? 'is-disabled' : ''}
+          disabled={page <= 1}
+          aria-label="이전 페이지"
+          onClick={() => goPage(page - 1)}
+        >
+          <i className="pi pi-chevron-left" aria-hidden="true" />
+        </button>
+
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
           <button
-            className="is-static"
-            aria-current="page"
+            type="button"
             key={p}
-            onClick={() => setPage(p)}
+            aria-current={p === page ? 'page' : undefined}
+            onClick={() => goPage(p)}
           >
             {p}
           </button>
         ))}
 
-        <span className="is-static" aria-label="다음 페이지">
+        <button
+          type="button"
+          className={page >= totalPages ? 'is-disabled' : ''}
+          disabled={page >= totalPages}
+          aria-label="다음 페이지"
+          onClick={() => goPage(page + 1)}
+        >
           <i className="pi pi-chevron-right" aria-hidden="true" />
-        </span>
+        </button>
       </div>
     </>
   );

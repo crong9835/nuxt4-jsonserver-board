@@ -4,67 +4,100 @@
       "id": "9069",
       "title": "ㅁㄴㅇㄻㄴㅇㄹㅇㄹㄴㄹㄴㅇㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹ",
       "name": "ㅁㄴㅇㄻㄴㅇㄹㅁㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴ",
-      "contents": "ㄴㅇㄻㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹ"
+      "contents": "ㄴㅇㄻㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㄹ",
+      "createdAt": "2026-08-01T09:12:00.000Z",
+      "views": 42,
+      "isNotice": false
     },
     {
       "id": "ce6d",
       "title": "제발",
       "name": "제발요...진짜",
-      "contents": "아우"
+      "contents": "아우",
+      "createdAt": "2026-08-02T14:30:00.000Z",
+      "views": 351,
+      "isNotice": false
     },
     {
       "id": "d764",
       "title": "ㅋㅋㅎㅎ",
       "name": "ㅎㅎㅎㅎ",
-      "contents": "ㅎㅎㅋㅋ"
+      "contents": "ㅎㅎㅋㅋ",
+      "createdAt": "2026-08-03T08:05:00.000Z",
+      "views": 128,
+      "isNotice": false
     },
     {
       "id": "2dc1",
       "title": "ㅎㅎㅎㅎㅎ",
       "name": "ㅎㅎㅎㅎ",
-      "contents": "ㅎㅎㅎㅎ"
+      "contents": "ㅎㅎㅎㅎ",
+      "createdAt": "2026-08-04T11:47:00.000Z",
+      "views": 7,
+      "isNotice": false
     },
     {
       "id": "e968",
       "title": "ㅎㅎㅎ",
       "name": "ㅎㅎㅎ",
-      "contents": "ㅎㅎㅎ"
+      "contents": "ㅎㅎㅎ",
+      "createdAt": "2026-08-05T16:20:00.000Z",
+      "views": 903,
+      "isNotice": false
     },
     {
       "id": "919d",
       "title": "ㅁㄴㅇㄻㄴㅇㄻ",
       "name": "ㅁㄴㅇㄻㄴㅇㄻㄴ",
-      "contents": "ㅇㄻㄴㅇㄻㄴㅇㄹ"
+      "contents": "ㅇㄻㄴㅇㄻㄴㅇㄹ",
+      "createdAt": "2026-08-06T10:00:00.000Z",
+      "views": 65,
+      "isNotice": true
     },
     {
       "id": "83bd",
       "title": "ㄴㅇㄻㄴㅇㄹㅁ",
       "name": "ㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ",
-      "contents": "ㅁㄴㅇㄹㄴㅁㅇㄻㄴㅇㄹ"
+      "contents": "ㅁㄴㅇㄹㄴㅁㅇㄻㄴㅇㄹ",
+      "createdAt": "2026-08-07T13:33:00.000Z",
+      "views": 214,
+      "isNotice": false
     },
     {
       "id": "b0ee",
       "title": "제발...제발....",
       "name": "제발...",
-      "contents": "제발제발제발제발제발"
+      "contents": "제발제발제발제발제발",
+      "createdAt": "2026-08-08T09:58:00.000Z",
+      "views": 1024,
+      "isNotice": false
     },
     {
       "id": "a478",
       "title": "수정이다",
       "name": "수정",
-      "contents": "수정이야"
+      "contents": "수정이야",
+      "createdAt": "2026-08-09T18:41:00.000Z",
+      "views": 89,
+      "isNotice": true
     },
     {
       "id": "2303",
       "title": "위플래쉬ㅣ~",
       "name": "ㅎㅎ",
-      "contents": "ㅎㅎㅎ"
+      "contents": "ㅎㅎㅎ",
+      "createdAt": "2026-08-10T07:15:00.000Z",
+      "views": 476,
+      "isNotice": false
     },
     {
       "id": "2f09",
       "title": "ㅎㅎ",
       "name": "ㅎㅎㅎ",
-      "contents": "ㅎㅎㅎ"
+      "contents": "ㅎㅎㅎ",
+      "createdAt": "2026-08-10T20:02:00.000Z",
+      "views": 33,
+      "isNotice": false
     }
   ],
   "comments": [

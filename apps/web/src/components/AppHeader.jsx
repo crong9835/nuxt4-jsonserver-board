@@ -1,7 +1,21 @@
 import { InputText } from 'primereact/inputtext';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function AppHeader() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [keyword, setKeyword] = useState(searchParams.get('q') || '');
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (keyword) {
+      navigate(`/?q=${encodeURIComponent(keyword)}`);
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <header className="site-header">
       <div className="shell header-inner">
@@ -15,14 +29,16 @@ export default function AppHeader() {
         </Link>
 
         <div className="header-actions">
-          <div className="search">
+          <form className="search" onSubmit={handleSearch}>
             <i className="pi pi-search" aria-hidden="true" />
             <InputText
               type="search"
               placeholder="질문이나 해결 방법 검색"
               aria-label="게시글 검색"
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
             />
-          </div>
+          </form>
           <Link to="/write" className="p-button header-write">
             <i className="pi pi-plus" aria-hidden="true" />
             <span>글쓰기</span>
