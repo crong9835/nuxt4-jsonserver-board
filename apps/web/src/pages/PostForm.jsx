@@ -35,8 +35,9 @@ export default function PostForm() {
       });
 
       if (response.ok) {
+        const newPost = await response.json();
         alert('등록되었습니다.');
-        navigate('/');
+        navigate(`/posts/${newPost.id}`);
       } else {
         alert('등록에 실패했습니다.');
       }
@@ -80,7 +81,7 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="title-count">
-                0 / 100자
+                {title.length} / 100자
               </span>
             </div>
           </div>
@@ -102,7 +103,7 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="author-count">
-                0 / 20자
+                {name.length} / 20자
               </span>
             </div>
           </div>
@@ -125,7 +126,7 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="content-count">
-                0 / 2,000자
+                {contents.length} / 2,000자
               </span>
             </div>
           </div>

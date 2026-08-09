@@ -45,7 +45,7 @@ export default function PostUpdate() {
     }).then((res) => {
       if (res.ok) {
         alert('수정되었습니다.');
-        navigate(`/`);
+        navigate(`/posts/${id}`);
       }
     });
   };
@@ -87,7 +87,7 @@ export default function PostUpdate() {
             />
             <div className="field-foot">
               <span className="field-hint" id="title-count">
-                0 / 100자
+                {title.length} / 100자
               </span>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function PostUpdate() {
             />
             <div className="field-foot">
               <span className="field-hint" id="author-count">
-                0 / 20자
+                {name.length} / 20자
               </span>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function PostUpdate() {
             />
             <div className="field-foot">
               <span className="field-hint" id="content-count">
-                0 / 2,000자
+                {contents.length} / 2,000자
               </span>
             </div>
           </div>

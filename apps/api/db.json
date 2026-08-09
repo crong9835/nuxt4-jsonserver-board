@@ -68,8 +68,34 @@
     }
   ],
   "comments": [
-    { "id": 1, "name": "ㅎㅎ", "content": "첫 번째 댓글입니다." },
-    { "id": 2, "name": "zz", "content": "두번째 댓글입니다." },
-    { "id": 3, "name": "gg", "content": "세번째 댓글입니다." }
+    {
+      "postId": "2f09",
+      "id": 1,
+      "name": "ㅎㅎ",
+      "contents": "첫 번째 댓글입니다."
+    },
+    {
+      "postId": "2303",
+      "id": 2,
+      "name": "zz",
+      "contents": "두번째 댓글입니다."
+    },
+    {
+      "postId": "a478",
+      "id": 3,
+      "name": "ㅎㅎ",
+      "contents": "첫 번째 댓글입니다."
+    },
+    {
+      "postId": "b0ee",
+      "id": 4,
+      "name": "zz",
+      "contents": "두번째 댓글입니다."
+    },
+    {
+      "id": "6816",
+      "name": "",
+      "contents": "ddd"
+    }
   ]
 }

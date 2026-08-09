@@ -1,21 +1,18 @@
 import { InputText } from 'primereact/inputtext';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function AppHeader() {
-  const navigate = useNavigate();
-
   return (
     <header className="site-header">
       <div className="shell header-inner">
-        <div className="logo">
+        <Link to="/" className="logo">
           <span className="logo-mark" aria-hidden="true">
             M
           </span>
           <span className="logo-copy">
             <strong>개발 미션 게시판</strong>
           </span>
-        </div>
+        </Link>
 
         <div className="header-actions">
           <div className="search">
@@ -26,10 +23,10 @@ export default function AppHeader() {
               aria-label="게시글 검색"
             />
           </div>
-          <span className="p-button header-write is-static">
+          <Link to="/write" className="p-button header-write">
             <i className="pi pi-plus" aria-hidden="true" />
             <span>글쓰기</span>
-          </span>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
+import { ContentState, PostListSkeleton } from '../components/ContentState.jsx';
+
 export default function PostList() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const limit = 10;
   const totalPages = Math.ceil(totalCount / limit);
 
   useEffect(() => {
+    setLoading(true);
+    setError(false);
     fetch(`http://localhost:4100/posts?_page=${page}&_per_page=${limit}`)
       .then((res) => {
         const total = res.headers.get('X-Total-Count');
@@ -20,12 +26,70 @@ export default function PostList() {
       .then((data) => {
         setPosts(data.data);
         setTotalCount(data.items);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setError(true);
+        setLoading(false);
       });
   }, [page]);
   // console.log('totalcount:', totalCount);
+
+  // 목록 보여주기
+  let listContent = (
+    <ul className="post-list">
+      {posts.map((post) => (
+        <li key={post.id} className="post-item">
+          <div className="post-item-body">
+            <div className="post-item-head">
+              <Link to={`/posts/${post.id}`} className="post-item-title">
+                {post.title}
+              </Link>
+            </div>
+            <div className="post-item-meta">
+              <span className="post-author">{post.name}</span>
+              <span className="sep" />
+              <span>8월 12일</span>
+              <span className="sep" />
+              <span>조회 351</span>
+            </div>
+          </div>
+          <div className="post-item-side">
+            <span className="reply-count">
+              <i className="pi pi-comment" aria-hidden="true" />
+              <span className="sr-only">댓글 </span>0
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+
+  if (posts.length === 0) {
+    listContent = (
+      <ContentState
+        icon="pi-inbox"
+        title="등록된 글이 없습니다"
+        description="첫 글을 작성해보세요"
+      />
+    );
+  }
+
+  if (error) {
+    listContent = (
+      <ContentState
+        tone="danger"
+        icon="pi-exclamation-triangle"
+        title="글을 불러오지 못했습니다"
+        description="잠시 후 다시 시도해주세요"
+      />
+    );
+  }
+
+  if (loading) {
+    listContent = <PostListSkeleton />;
+  }
 
   return (
     <>
@@ -63,34 +127,7 @@ export default function PostList() {
           </div>
         </div>
 
-        <div className="card card--list">
-          <ul className="post-list">
-            {posts.map((post) => (
-              <li key={post.id} className="post-item">
-                <div className="post-item-body">
-                  <div className="post-item-head">
-                    <Link to={`/posts/${post.id}`} className="post-item-title">
-                      {post.title}
-                    </Link>
-                  </div>
-                  <div className="post-item-meta">
-                    <span className="post-author">{post.name}</span>
-                    <span className="sep" />
-                    <span>8월 12일</span>
-                    <span className="sep" />
-                    <span>조회 351</span>
-                  </div>
-                </div>
-                <div className="post-item-side">
-                  <span className="reply-count">
-                    <i className="pi pi-comment" aria-hidden="true" />
-                    <span className="sr-only">댓글 </span>0
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="card card--list">{listContent}</div>
       </section>
       <div className="pager" aria-label="페이지 이동 UI">
         <span className="is-disabled" aria-hidden="true">
