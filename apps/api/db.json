@@ -107,6 +107,24 @@
       "createdAt": "2026-08-10T04:10:56.336Z",
       "views": 0,
       "isNotice": false
+    },
+    {
+      "id": "64d3",
+      "title": "새글을 써봐요",
+      "name": "네 ",
+      "contents": "네",
+      "createdAt": "2026-08-10T07:23:11.465Z",
+      "views": 0,
+      "isNotice": false
+    },
+    {
+      "id": "8d96",
+      "title": "아아..",
+      "name": "아...",
+      "contents": "이게머임",
+      "createdAt": "2026-08-10T07:26:13.662Z",
+      "views": 0,
+      "isNotice": false
     }
   ],
   "comments": [
@@ -169,6 +187,12 @@
       "name": "",
       "contents": "ㅎㅎㅎㅎㅎㅎ",
       "postId": "2303"
+    },
+    {
+      "id": "75dc",
+      "name": "",
+      "contents": "하이루미너스",
+      "postId": "8d96"
     }
   ]
 }

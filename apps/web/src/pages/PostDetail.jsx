@@ -52,7 +52,7 @@ export default function PostDetail() {
   };
 
   const confirmDelete = () => {
-    fetch(`http://localhost:4100/posts/${id}`, {
+    fetch(`http://localhost:4100/posts/${id}?_dependent=comments`, {
       method: 'DELETE',
     }).then((res) => {
       console.log(res);

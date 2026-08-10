@@ -5,6 +5,7 @@ import { ContentState, PostListSkeleton } from '../components/ContentState.jsx';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
+  const [comments, setComments] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -30,6 +31,16 @@ export default function PostList() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:4100/comments')
+      .then((res) => res.json())
+      .then((data) => setComments(data))
+      .catch((err) => console.error('댓글 로딩 실패:', err));
+  }, []);
+
+  const getCommentCount = (postId) =>
+    comments.filter((comment) => comment.postId === postId).length;
 
   const searched = posts.filter((post) => {
     const word = keyword.toLowerCase();
@@ -103,7 +114,8 @@ export default function PostList() {
           <div className="post-item-side">
             <span className="reply-count">
               <i className="pi pi-comment" aria-hidden="true" />
-              <span className="sr-only">댓글 </span>0
+              <span className="sr-only">댓글 </span>
+              {getCommentCount(post.id)}
             </span>
           </div>
         </li>
