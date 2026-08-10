@@ -19,6 +19,7 @@ export default function PostDetail() {
   const [commentsList, setCommentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   // 게시글 가져오기
   useEffect(() => {
     async function fetchPost() {
@@ -47,6 +48,10 @@ export default function PostDetail() {
 
   // 게시글 삭제
   const deleteBtn = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
     fetch(`http://localhost:4100/posts/${id}`, {
       method: 'DELETE',
     }).then((res) => {
@@ -72,6 +77,10 @@ export default function PostDetail() {
   };
 
   const saveComments = async () => {
+    if (!contents.trim()) {
+      alert('칸을 채워주세요.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:4100/comments', {
         method: 'POST',
@@ -170,8 +179,7 @@ export default function PostDetail() {
 
         <div>
           <div className="author-name">
-            {comment.name}
-
+            작성자
             <span className="author-date comment-when">8월 10일 10:12</span>
           </div>
           <p className="comment-text">{comment.contents}</p>
@@ -235,20 +243,30 @@ export default function PostDetail() {
       <article className="card article-card">{articleContent}</article>
 
       {commentSection}
-
       {/* 퍼블리싱된 삭제 확인 UI. visible 상태와 이벤트는 인턴이 구현한다. */}
       <Dialog
-        visible={false}
+        visible={showDeleteDialog}
         header="이 글을 삭제할까요?"
         draggable={false}
+        onHide={() => setShowDeleteDialog(false)}
         footer={
           <>
-            <Button type="button" label="취소" severity="help" />
-            <Button type="button" label="삭제" severity="danger" />
+            <Button
+              type="button"
+              label="취소"
+              severity="help"
+              onClick={() => setShowDeleteDialog(false)}
+            />
+            <Button
+              type="button"
+              label="삭제"
+              severity="danger"
+              onClick={confirmDelete}
+            />
           </>
         }
       >
-        댓글 2개도 함께 사라지고, 되돌릴 수 없어요.
+        {`댓글 ${commentsList.length}개도 함께 사라지고, 되돌릴 수 없어요.`}
       </Dialog>
     </>
   );

@@ -25,6 +25,10 @@ export default function PostForm() {
   };
 
   const savepost = async () => {
+    if (!title.trim() || !name.trim() || !contents.trim()) {
+      alert('모든 칸을 채워주세요.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:4100/posts', {
         method: 'POST',

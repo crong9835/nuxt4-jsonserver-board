@@ -82,53 +82,93 @@
       "isNotice": true
     },
     {
-      "id": "2303",
-      "title": "위플래쉬ㅣ~",
-      "name": "ㅎㅎ",
-      "contents": "ㅎㅎㅎ",
-      "createdAt": "2026-08-10T07:15:00.000Z",
-      "views": 476,
+      "id": "ea97",
+      "title": "안녕하세요",
+      "name": "감사해요 ",
+      "contents": "잘있어요",
+      "createdAt": "2026-08-10T04:03:18.471Z",
+      "views": 0,
       "isNotice": false
     },
     {
-      "id": "2f09",
-      "title": "ㅎㅎ",
-      "name": "ㅎㅎㅎ",
-      "contents": "ㅎㅎㅎ",
-      "createdAt": "2026-08-10T20:02:00.000Z",
-      "views": 33,
+      "id": "a22e",
+      "title": "안녕하세요",
+      "name": "감사하요",
+      "contents": "잘있어요",
+      "createdAt": "2026-08-10T04:05:35.893Z",
+      "views": 0,
+      "isNotice": false
+    },
+    {
+      "id": "6f66",
+      "title": "안녕하세요 감사해요 잘있어요 다시만나요",
+      "name": "힘들었던 하루 힘들었던 하루",
+      "contents": "많이도 지쳤지만",
+      "createdAt": "2026-08-10T04:10:56.336Z",
+      "views": 0,
       "isNotice": false
     }
   ],
   "comments": [
     {
-      "postId": "2f09",
-      "id": 1,
-      "name": "ㅎㅎ",
-      "contents": "첫 번째 댓글입니다."
-    },
-    {
       "postId": "2303",
-      "id": 2,
+      "id": "2",
       "name": "zz",
       "contents": "두번째 댓글입니다."
     },
     {
       "postId": "a478",
-      "id": 3,
+      "id": "3",
       "name": "ㅎㅎ",
       "contents": "첫 번째 댓글입니다."
     },
     {
       "postId": "b0ee",
-      "id": 4,
+      "id": "4",
       "name": "zz",
       "contents": "두번째 댓글입니다."
     },
     {
-      "id": "6816",
+      "id": "83f1",
       "name": "",
-      "contents": "ddd"
+      "contents": "이건 무슨댓글이냐",
+      "postId": "a478"
+    },
+    {
+      "id": "85aa",
+      "name": "",
+      "contents": "안ㄴ요",
+      "postId": "a478"
+    },
+    {
+      "id": "7ccc",
+      "name": "작성자",
+      "contents": "이름은 안보내고있으니까",
+      "postId": "a478"
+    },
+    {
+      "id": "5f04",
+      "name": "",
+      "contents": "",
+      "postId": "2303"
+    },
+    {
+      "id": "ac74",
+      "name": "",
+      "contents": "아 빈댓글 막는거 해야하네",
+      "postId": "2303"
+    },
+    {
+      "id": "ef39",
+      "name": "",
+      "contents": "ㅎㅎㅎㅎ",
+      "postId": "2303"
+    },
+    {
+      "id": "d7bb",
+      "name": "",
+      "contents": "ㅎㅎㅎㅎㅎㅎ",
+      "postId": "2303"
     }
   ]
 }
