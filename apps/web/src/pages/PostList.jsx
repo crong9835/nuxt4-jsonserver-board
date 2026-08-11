@@ -81,6 +81,24 @@ export default function PostList() {
   const totalPages = Math.ceil(totalCount / limit);
   const pagePosts = sorted.slice((page - 1) * limit, page * limit);
 
+  const pageWindow = 5;
+  let startPage = page - 2;
+  if (startPage < 1) {
+    startPage = 1;
+  }
+  let endPage = startPage + pageWindow - 1;
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = endPage - pageWindow + 1;
+    if (startPage < 1) {
+      startPage = 1;
+    }
+  }
+  const pageNumbers = [];
+  for (let p = startPage; p <= endPage; p++) {
+    pageNumbers.push(p);
+  }
+
   const formatDate = (value) => {
     const date = new Date(value);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
@@ -234,7 +252,7 @@ export default function PostList() {
           <i className="pi pi-chevron-left" aria-hidden="true" />
         </button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        {pageNumbers.map((p) => (
           <button
             type="button"
             key={p}

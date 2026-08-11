@@ -12,6 +12,22 @@ export default function PostUpdate() {
   const [name, setName] = useState('');
   const [contents, setContents] = useState('');
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [initialPost, setInitialPost] = useState(null);
+  const [leaveDialogVisible, setLeaveDialogVisible] = useState(false);
+
+  const isDirty = Boolean(
+    initialPost &&
+      (title !== initialPost.title ||
+        name !== initialPost.name ||
+        contents !== initialPost.contents)
+  );
+
+  const onCancel = (event) => {
+    if (!isDirty) return;
+    event.preventDefault();
+    setLeaveDialogVisible(true);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -20,7 +36,7 @@ export default function PostUpdate() {
         const response = await fetch(`http://localhost:4100/posts/${id}`, {
           signal: abortController.signal,
         });
-        if (response.ok) {
+        if (!response.ok) {
           console.error('게시글불러오기 실패');
           setLoading(false);
           return;
@@ -31,6 +47,11 @@ export default function PostUpdate() {
         setTitle(data.title);
         setName(data.name);
         setContents(data.contents);
+        setInitialPost({
+          title: data.title,
+          name: data.name,
+          contents: data.contents,
+        });
         setLoading(false);
       } catch (err) {
         if (err.name === 'AbortError') return;
@@ -45,6 +66,7 @@ export default function PostUpdate() {
   }, [id]);
 
   const updatePost = async () => {
+    setSaving(true);
     await fetch(`http://localhost:4100/posts/${id}`, {
       method: 'PATCH',
       headers: {
@@ -59,6 +81,8 @@ export default function PostUpdate() {
       if (res.ok) {
         alert('수정되었습니다.');
         navigate(`/posts/${id}`);
+      } else {
+        setSaving(false);
       }
     });
   };
@@ -95,6 +119,7 @@ export default function PostUpdate() {
               onChange={function (event) {
                 setTitle(event.target.value);
               }}
+              maxLength={100}
               placeholder="예: 페이지네이션 쿼리는 어떻게 넘기시나요?"
               aria-describedby="title-count"
             />
@@ -119,6 +144,7 @@ export default function PostUpdate() {
               onChange={function (event) {
                 setName(event.target.value);
               }}
+              maxLength={20}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"
             />
@@ -143,6 +169,7 @@ export default function PostUpdate() {
               onChange={function (event) {
                 setContents(event.target.value);
               }}
+              maxLength={2000}
               rows={12}
               placeholder="막힌 부분, 시도해본 방법, 궁금한 점을 차례로 적어보세요"
               aria-describedby="content-count"
@@ -155,7 +182,11 @@ export default function PostUpdate() {
           </div>
 
           <div className="form-footer">
-            <Link to="/" className="p-button p-button-help btn-xl is-static">
+            <Link
+              to="/"
+              onClick={onCancel}
+              className="p-button p-button-help btn-xl is-static"
+            >
               수정 취소
             </Link>
             <Button
@@ -164,6 +195,7 @@ export default function PostUpdate() {
               label="글 수정"
               className="btn-xl"
               icon="pi pi-check"
+              disabled={saving}
             />
           </div>
         </form>
@@ -181,18 +213,24 @@ export default function PostUpdate() {
         </aside>
       </div>
 
-      {/* 퍼블리싱된 이탈 확인 UI. visible 상태와 이벤트는 인턴이 구현한다. */}
       <Dialog
-        visible={false}
+        visible={leaveDialogVisible}
+        onHide={() => setLeaveDialogVisible(false)}
         header="작성을 그만둘까요?"
         draggable={false}
         footer={
           <>
-            <Button type="button" label="계속 작성" severity="help" />
+            <Button
+              type="button"
+              label="계속 작성"
+              severity="help"
+              onClick={() => setLeaveDialogVisible(false)}
+            />
             <Button
               type="button"
               label="내용 버리고 나가기"
               severity="danger"
+              onClick={() => navigate('/')}
             />
           </>
         }

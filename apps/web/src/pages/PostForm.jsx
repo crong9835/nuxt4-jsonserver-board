@@ -13,8 +13,16 @@ export default function PostForm() {
     name: '',
     contents: '',
   });
+  const [leaveDialogVisible, setLeaveDialogVisible] = useState(false);
 
   const { title, name, contents } = post;
+  const isDirty = Boolean(title.trim() || name.trim() || contents.trim());
+
+  const onCancel = (event) => {
+    if (!isDirty) return;
+    event.preventDefault();
+    setLeaveDialogVisible(true);
+  };
 
   const onChange = (event) => {
     const { value, name } = event.target;
@@ -85,6 +93,7 @@ export default function PostForm() {
               name="title"
               value={title}
               onChange={onChange}
+              maxLength={100}
               placeholder="예: 페이지네이션 쿼리는 어떻게 넘기시나요?"
               aria-describedby="title-count"
             />
@@ -107,6 +116,7 @@ export default function PostForm() {
               name="name"
               value={name}
               onChange={onChange}
+              maxLength={20}
               placeholder="목록에 표시될 이름"
               aria-describedby="author-count"
             />
@@ -129,6 +139,7 @@ export default function PostForm() {
               name="contents"
               value={contents}
               onChange={onChange}
+              maxLength={2000}
               rows={12}
               placeholder="막힌 부분, 시도해본 방법, 궁금한 점을 차례로 적어보세요"
               aria-describedby="content-count"
@@ -141,7 +152,11 @@ export default function PostForm() {
           </div>
 
           <div className="form-footer">
-            <Link to="/" className="p-button p-button-help btn-xl is-static">
+            <Link
+              to="/"
+              onClick={onCancel}
+              className="p-button p-button-help btn-xl is-static"
+            >
               작성 취소
             </Link>
             <Button
@@ -167,18 +182,24 @@ export default function PostForm() {
         </aside>
       </div>
 
-      {/* 퍼블리싱된 이탈 확인 UI. visible 상태와 이벤트는 인턴이 구현한다. */}
       <Dialog
-        visible={false}
+        visible={leaveDialogVisible}
+        onHide={() => setLeaveDialogVisible(false)}
         header="작성을 그만둘까요?"
         draggable={false}
         footer={
           <>
-            <Button type="button" label="계속 작성" severity="help" />
+            <Button
+              type="button"
+              label="계속 작성"
+              severity="help"
+              onClick={() => setLeaveDialogVisible(false)}
+            />
             <Button
               type="button"
               label="내용 버리고 나가기"
               severity="danger"
+              onClick={() => navigate('/')}
             />
           </>
         }

@@ -20,6 +20,8 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   // 게시글 가져오기
   useEffect(() => {
     const abortController = new AbortController();
@@ -79,6 +81,7 @@ export default function PostDetail() {
   };
 
   const confirmDelete = () => {
+    setDeleting(true);
     fetch(`http://localhost:4100/posts/${id}?_dependent=comments`, {
       method: 'DELETE',
     }).then((res) => {
@@ -88,6 +91,7 @@ export default function PostDetail() {
         navigate('/');
       } else {
         alert('삭제실패');
+        setDeleting(false);
       }
     });
   };
@@ -108,6 +112,7 @@ export default function PostDetail() {
       alert('칸을 채워주세요.');
       return;
     }
+    setSubmitting(true);
     try {
       const response = await fetch('http://localhost:4100/comments', {
         method: 'POST',
@@ -131,6 +136,7 @@ export default function PostDetail() {
     } catch (error) {
       console.error('에러 발생:', error);
     }
+    setSubmitting(false);
   };
 
   // 게시글 보여주기
@@ -250,7 +256,7 @@ export default function PostDetail() {
           onChange={onChange}
         />
         <div className="row-end">
-          <Button onClick={saveComments} type="button" label="댓글 등록" />
+          <Button onClick={saveComments} type="button" label="댓글 등록" disabled={submitting} />
         </div>
       </form>
     </section>
@@ -289,6 +295,7 @@ export default function PostDetail() {
               label="삭제"
               severity="danger"
               onClick={confirmDelete}
+              disabled={deleting}
             />
           </>
         }
