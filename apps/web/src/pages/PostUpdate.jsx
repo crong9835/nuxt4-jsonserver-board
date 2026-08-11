@@ -4,6 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { API_BASE } from '../api.js';
 
 export default function PostUpdate() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function PostUpdate() {
     const abortController = new AbortController();
     async function fetchPost() {
       try {
-        const response = await fetch(`http://localhost:4100/posts/${id}`, {
+        const response = await fetch(`${API_BASE}/posts/${id}`, {
           signal: abortController.signal,
         });
         if (!response.ok) {
@@ -67,7 +68,7 @@ export default function PostUpdate() {
 
   const updatePost = async () => {
     setSaving(true);
-    await fetch(`http://localhost:4100/posts/${id}`, {
+    await fetch(`${API_BASE}/posts/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

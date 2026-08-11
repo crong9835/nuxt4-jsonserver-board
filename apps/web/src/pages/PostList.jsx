@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { ContentState, PostListSkeleton } from '../components/ContentState.jsx';
+import { API_BASE } from '../api.js';
 
 export default function PostList() {
   const [posts, setPosts] = useState([]);
@@ -21,7 +22,7 @@ export default function PostList() {
     const abortController = new AbortController();
     setLoading(true);
     setError(false);
-    fetch('http://localhost:4100/posts', { signal: abortController.signal })
+    fetch(`${API_BASE}/posts`, { signal: abortController.signal })
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
@@ -41,7 +42,7 @@ export default function PostList() {
   useEffect(() => {
     const abortController = new AbortController();
 
-    fetch('http://localhost:4100/comments', { signal: abortController.signal })
+    fetch(`${API_BASE}/comments`, { signal: abortController.signal })
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch((err) => {

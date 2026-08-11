@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "json-server db.json --port 4100"
+    "dev": "json-server db.json --host 0.0.0.0 --port 4100"
   },
   "keywords": [],
   "author": "",

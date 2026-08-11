@@ -4,6 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { API_BASE } from '../api.js';
 
 export default function PostForm() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function PostForm() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:4100/posts', {
+      const response = await fetch(`${API_BASE}/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

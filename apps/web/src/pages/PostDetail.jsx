@@ -6,6 +6,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { ContentState, ArticleSkeleton } from '../components/ContentState.jsx';
+import { API_BASE } from '../api.js';
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -29,7 +30,7 @@ export default function PostDetail() {
     async function fetchPost() {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:4100/posts/${id}`, {
+        const response = await fetch(`${API_BASE}/posts/${id}`, {
           signal: abortController.signal,
         });
         if (!response.ok) {
@@ -60,7 +61,7 @@ export default function PostDetail() {
   useEffect(() => {
     const abortController = new AbortController();
 
-    fetch(`http://localhost:4100/comments?postId=${id}`, {
+    fetch(`${API_BASE}/comments?postId=${id}`, {
       signal: abortController.signal,
     })
       .then((res) => res.json())
@@ -82,7 +83,7 @@ export default function PostDetail() {
 
   const confirmDelete = () => {
     setDeleting(true);
-    fetch(`http://localhost:4100/posts/${id}?_dependent=comments`, {
+    fetch(`${API_BASE}/posts/${id}?_dependent=comments`, {
       method: 'DELETE',
     }).then((res) => {
       console.log(res);
@@ -114,7 +115,7 @@ export default function PostDetail() {
     }
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:4100/comments', {
+      const response = await fetch(`${API_BASE}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
