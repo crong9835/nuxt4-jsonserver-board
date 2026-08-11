@@ -14,21 +14,34 @@ export default function PostUpdate() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const abortController = new AbortController();
     async function fetchPost() {
-      const response = await fetch(`http://localhost:4100/posts/${id}`);
-      if (response.ok === false) {
-        console.log('게시글불러오기 실패');
-        setLoading(false);
-        return;
-      }
-      const data = await response.json();
+      try {
+        const response = await fetch(`http://localhost:4100/posts/${id}`, {
+          signal: abortController.signal,
+        });
+        if (response.ok) {
+          console.error('게시글불러오기 실패');
+          setLoading(false);
+          return;
+        }
 
-      setTitle(data.title);
-      setName(data.name);
-      setContents(data.contents);
-      setLoading(false);
+        const data = await response.json();
+
+        setTitle(data.title);
+        setName(data.name);
+        setContents(data.contents);
+        setLoading(false);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        console.err('불러오기 실패', err);
+        setLoading(false);
+      }
     }
     fetchPost();
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   const updatePost = async () => {

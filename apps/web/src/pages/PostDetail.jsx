@@ -22,28 +22,55 @@ export default function PostDetail() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   // 게시글 가져오기
   useEffect(() => {
+    const abortController = new AbortController();
+
     async function fetchPost() {
       setLoading(true);
-      const response = await fetch(`http://localhost:4100/posts/${id}`);
-      if (response.ok === false) {
-        setNotFound(true);
-        setLoading(false);
-        return;
-      }
-      const data = await response.json();
+      try {
+        const response = await fetch(`http://localhost:4100/posts/${id}`, {
+          signal: abortController.signal,
+        });
+        if (!response.ok) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
 
-      setPost(data);
-      setNotFound(false);
-      setLoading(false);
+        const data = await response.json();
+
+        setPost(data);
+        setNotFound(false);
+        setLoading(false);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        console.error('불러오기 실패', err);
+        setLoading(false); // 이것도 아직 빠져 있음
+      }
     }
+
     fetchPost();
+
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
   // 댓글가져오기
   useEffect(() => {
-    fetch(`http://localhost:4100/comments?postId=${id}`)
+    const abortController = new AbortController();
+
+    fetch(`http://localhost:4100/comments?postId=${id}`, {
+      signal: abortController.signal,
+    })
       .then((res) => res.json())
       .then((data) => setCommentsList(data))
-      .catch((err) => console.error('댓글 로딩 실패:', err));
+      .catch((err) => {
+        if (err.name === 'AbortError') return;
+        console.error('댓글 로딩 실패:', err);
+      });
+
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   // 게시글 삭제

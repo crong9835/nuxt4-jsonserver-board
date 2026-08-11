@@ -18,25 +18,39 @@ export default function PostList() {
   const sort = searchParams.get('sort') || 'latest';
 
   useEffect(() => {
+    const abortController = new AbortController();
     setLoading(true);
     setError(false);
-    fetch('http://localhost:4100/posts')
+    fetch('http://localhost:4100/posts', { signal: abortController.signal })
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err.name === 'AbortError') return;
+        console.error('로딩 실패', err);
         setError(true);
         setLoading(false);
       });
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:4100/comments')
+    const abortController = new AbortController();
+
+    fetch('http://localhost:4100/comments', { signal: abortController.signal })
       .then((res) => res.json())
       .then((data) => setComments(data))
-      .catch((err) => console.error('댓글 로딩 실패:', err));
+      .catch((err) => {
+        if (err.name === 'AbortError') return;
+        console.error('로딩 실패', err);
+      });
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   const getCommentCount = (postId) =>
