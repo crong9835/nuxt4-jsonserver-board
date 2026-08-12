@@ -2,27 +2,80 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '../api.js';
+import { ContentState } from '../components/ContentState.jsx';
 
 export default function PostForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEdit = Boolean(id);
 
   const [post, setPosts] = useState({
     title: '',
     name: '',
     contents: '',
   });
+  const [initialPost, setInitialPost] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [leaveDialogVisible, setLeaveDialogVisible] = useState(false);
+  const [errors, setErrors] = useState({ title: '', name: '', contents: '' });
+  const [saveError, setSaveError] = useState(false);
+  const titleRef = useRef(null);
+  const authorRef = useRef(null);
+  const contentRef = useRef(null);
+  const cancelLinkRef = useRef(null);
 
   const { title, name, contents } = post;
-  const isDirty = Boolean(title.trim() || name.trim() || contents.trim());
+
+  let isDirty = false;
+  if (isEdit && initialPost) {
+    isDirty =
+      title !== initialPost.title ||
+      name !== initialPost.name ||
+      contents !== initialPost.contents;
+  } else if (!isEdit) {
+    isDirty = Boolean(title.trim() || name.trim() || contents.trim());
+  }
 
   const onCancel = (event) => {
     if (!isDirty) return;
     event.preventDefault();
     setLeaveDialogVisible(true);
+  };
+
+  const closeLeaveDialog = () => {
+    setLeaveDialogVisible(false);
+    cancelLinkRef.current?.focus();
+  };
+
+  useEffect(() => {
+    const onBeforeUnload = (event) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [isDirty]);
+
+  const validate = () => {
+    const nextErrors = { title: '', name: '', contents: '' };
+    if (!title.trim()) nextErrors.title = '제목을 입력해주세요.';
+    if (!name.trim()) nextErrors.name = '닉네임을 입력해주세요.';
+    if (!contents.trim()) nextErrors.contents = '내용을 입력해주세요.';
+    setErrors(nextErrors);
+
+    if (nextErrors.title) {
+      titleRef.current?.focus();
+    } else if (nextErrors.name) {
+      authorRef.current?.focus();
+    } else if (nextErrors.contents) {
+      contentRef.current?.focus();
+    }
+
+    return !nextErrors.title && !nextErrors.name && !nextErrors.contents;
   };
 
   const onChange = (event) => {
@@ -33,11 +86,46 @@ export default function PostForm() {
     });
   };
 
-  const savepost = async () => {
-    if (!title.trim() || !name.trim() || !contents.trim()) {
-      alert('모든 칸을 채워주세요.');
-      return;
+  useEffect(() => {
+    if (!isEdit) return;
+    const abortController = new AbortController();
+    async function fetchPost() {
+      try {
+        const response = await fetch(`${API_BASE}/posts/${id}`, {
+          signal: abortController.signal,
+        });
+        if (!response.ok) {
+          console.error('게시글불러오기 실패');
+          return;
+        }
+
+        const data = await response.json();
+
+        setPosts({
+          title: data.title,
+          name: data.name,
+          contents: data.contents,
+        });
+        setInitialPost({
+          title: data.title,
+          name: data.name,
+          contents: data.contents,
+        });
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        console.error('불러오기 실패', err);
+      }
     }
+    fetchPost();
+    return () => {
+      abortController.abort();
+    };
+  }, [id, isEdit]);
+
+  const savepost = async () => {
+    if (!validate()) return;
+    setSaving(true);
+    setSaveError(false);
     try {
       const response = await fetch(`${API_BASE}/posts`, {
         method: 'POST',
@@ -58,11 +146,48 @@ export default function PostForm() {
         navigate(`/posts/${newPost.id}`);
       } else {
         alert('등록에 실패했습니다.');
+        setSaveError(true);
+        setSaving(false);
       }
     } catch (error) {
       console.error('에러 발생:', error);
+      setSaveError(true);
+      setSaving(false);
     }
   };
+
+  const updatePost = async () => {
+    if (!validate()) return;
+    setSaving(true);
+    setSaveError(false);
+    try {
+      const res = await fetch(`${API_BASE}/posts/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title,
+          name: name,
+          contents: contents,
+        }),
+      });
+
+      if (res.ok) {
+        alert('수정되었습니다.');
+        navigate(`/posts/${id}`);
+      } else {
+        setSaveError(true);
+        setSaving(false);
+      }
+    } catch (error) {
+      console.error('에러 발생:', error);
+      setSaveError(true);
+      setSaving(false);
+    }
+  };
+
+  const onSubmit = isEdit ? updatePost : savepost;
 
   return (
     <>
@@ -73,7 +198,7 @@ export default function PostForm() {
 
       <section className="page-intro page-intro--compact">
         <div>
-          <h1 className="page-title">새 글 작성</h1>
+          <h1 className="page-title">{isEdit ? '게시글 수정' : '새 글 작성'}</h1>
           <p className="page-description">
             질문이나 해결 방법을 작성하면 목록에 바로 보여요.
           </p>
@@ -90,6 +215,7 @@ export default function PostForm() {
               </span>
             </label>
             <InputText
+              ref={titleRef}
               id="title"
               name="title"
               value={title}
@@ -100,7 +226,7 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="title-count">
-                {title.length} / 100자
+                {errors.title || `${title.length} / 100자`}
               </span>
             </div>
           </div>
@@ -113,6 +239,7 @@ export default function PostForm() {
               </span>
             </label>
             <InputText
+              ref={authorRef}
               id="author"
               name="name"
               value={name}
@@ -123,7 +250,7 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="author-count">
-                {name.length} / 20자
+                {errors.name || `${name.length} / 20자`}
               </span>
             </div>
           </div>
@@ -136,6 +263,7 @@ export default function PostForm() {
               </span>
             </label>
             <InputTextarea
+              ref={contentRef}
               id="content"
               name="contents"
               value={contents}
@@ -147,25 +275,37 @@ export default function PostForm() {
             />
             <div className="field-foot">
               <span className="field-hint" id="content-count">
-                {contents.length} / 2,000자
+                {errors.contents || `${contents.length} / 2,000자`}
               </span>
             </div>
           </div>
 
+          {saveError && (
+            <ContentState
+              compact
+              tone="danger"
+              icon="pi-exclamation-triangle"
+              title="저장하지 못했습니다"
+              description="잠시 후 다시 시도해주세요"
+            />
+          )}
+
           <div className="form-footer">
             <Link
+              ref={cancelLinkRef}
               to="/"
               onClick={onCancel}
               className="p-button p-button-help btn-xl is-static"
             >
-              작성 취소
+              {isEdit ? '수정 취소' : '작성 취소'}
             </Link>
             <Button
-              onClick={savepost}
+              onClick={onSubmit}
               type="button"
-              label="글 등록"
+              label={isEdit ? '글 수정' : '글 등록'}
               className="btn-xl"
               icon="pi pi-check"
+              disabled={saving}
             />
           </div>
         </form>
@@ -185,7 +325,7 @@ export default function PostForm() {
 
       <Dialog
         visible={leaveDialogVisible}
-        onHide={() => setLeaveDialogVisible(false)}
+        onHide={closeLeaveDialog}
         header="작성을 그만둘까요?"
         draggable={false}
         footer={
@@ -194,7 +334,7 @@ export default function PostForm() {
               type="button"
               label="계속 작성"
               severity="help"
-              onClick={() => setLeaveDialogVisible(false)}
+              onClick={closeLeaveDialog}
             />
             <Button
               type="button"

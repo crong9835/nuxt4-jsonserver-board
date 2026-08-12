@@ -3,7 +3,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ContentState, ArticleSkeleton } from '../components/ContentState.jsx';
 import { API_BASE } from '../api.js';
@@ -20,9 +20,13 @@ export default function PostDetail() {
   const [commentsList, setCommentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsError, setCommentsError] = useState(false);
+  const deleteBtnRef = useRef(null);
   // 게시글 가져오기
   useEffect(() => {
     const abortController = new AbortController();
@@ -33,8 +37,13 @@ export default function PostDetail() {
         const response = await fetch(`${API_BASE}/posts/${id}`, {
           signal: abortController.signal,
         });
-        if (!response.ok) {
+        if (response.status === 404) {
           setNotFound(true);
+          setLoading(false);
+          return;
+        }
+        if (!response.ok) {
+          setError(true);
           setLoading(false);
           return;
         }
@@ -43,11 +52,13 @@ export default function PostDetail() {
 
         setPost(data);
         setNotFound(false);
+        setError(false);
         setLoading(false);
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('불러오기 실패', err);
-        setLoading(false); // 이것도 아직 빠져 있음
+        setError(true);
+        setLoading(false);
       }
     }
 
@@ -60,15 +71,22 @@ export default function PostDetail() {
   // 댓글가져오기
   useEffect(() => {
     const abortController = new AbortController();
+    setCommentsLoading(true);
+    setCommentsError(false);
 
     fetch(`${API_BASE}/comments?postId=${id}`, {
       signal: abortController.signal,
     })
       .then((res) => res.json())
-      .then((data) => setCommentsList(data))
+      .then((data) => {
+        setCommentsList(data);
+        setCommentsLoading(false);
+      })
       .catch((err) => {
         if (err.name === 'AbortError') return;
         console.error('댓글 로딩 실패:', err);
+        setCommentsError(true);
+        setCommentsLoading(false);
       });
 
     return () => {
@@ -81,20 +99,31 @@ export default function PostDetail() {
     setShowDeleteDialog(true);
   };
 
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false);
+    deleteBtnRef.current?.focus();
+  };
+
   const confirmDelete = () => {
     setDeleting(true);
     fetch(`${API_BASE}/posts/${id}?_dependent=comments`, {
       method: 'DELETE',
-    }).then((res) => {
-      console.log(res);
-      if (res.ok) {
-        alert('삭제완료');
-        navigate('/');
-      } else {
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.ok) {
+          alert('삭제완료');
+          navigate('/');
+        } else {
+          alert('삭제실패');
+          setDeleting(false);
+        }
+      })
+      .catch((err) => {
+        console.error('삭제 실패', err);
         alert('삭제실패');
         setDeleting(false);
-      }
-    });
+      });
   };
 
   // 댓글쓰기
@@ -123,6 +152,7 @@ export default function PostDetail() {
         body: JSON.stringify({
           ...comments,
           postId: id,
+          createdAt: new Date().toISOString(),
         }),
       });
 
@@ -140,6 +170,21 @@ export default function PostDetail() {
     setSubmitting(false);
   };
 
+  const formatDateTime = (value) => {
+    const date = new Date(value);
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${hour}:${minute}`;
+  };
+
+  const formatCommentDate = (value) => {
+    if (!value) return '';
+    const date = new Date(value);
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    return `${date.getMonth() + 1}월 ${date.getDate()}일 ${hour}:${minute}`;
+  };
+
   // 게시글 보여주기
   let articleContent = (
     <>
@@ -153,13 +198,13 @@ export default function PostDetail() {
             </span>
             <div>
               <div className="author-name">{post.name}</div>
-              <div className="author-date">2026년 8월 10일 09:02</div>
+              <div className="author-date">{formatDateTime(post.createdAt)}</div>
             </div>
           </div>
           <div className="stat-row">
-            <span aria-label="조회 297회">
+            <span aria-label={`조회 ${post.views}회`}>
               <i className="pi pi-eye" aria-hidden="true" />
-              297
+              {post.views}
             </span>
             <span aria-label={`댓글 ${commentsList.length}개`}>
               <i className="pi pi-comment" aria-hidden="true" />
@@ -174,6 +219,7 @@ export default function PostDetail() {
       </div>
       <div className="post-actions">
         <Button
+          ref={deleteBtnRef}
           onClick={deleteBtn}
           type="button"
           label="글 삭제"
@@ -199,6 +245,17 @@ export default function PostDetail() {
     );
   }
 
+  if (error) {
+    articleContent = (
+      <ContentState
+        tone="danger"
+        icon="pi-exclamation-triangle"
+        title="글을 불러오지 못했습니다"
+        description="잠시 후 다시 시도해주세요"
+      />
+    );
+  }
+
   if (loading) {
     articleContent = <ArticleSkeleton />;
   }
@@ -214,7 +271,7 @@ export default function PostDetail() {
         <div>
           <div className="author-name">
             작성자
-            <span className="author-date comment-when">8월 10일 10:12</span>
+            <span className="author-date comment-when">{formatCommentDate(comment.createdAt)}</span>
           </div>
           <p className="comment-text">{comment.contents}</p>
         </div>
@@ -230,6 +287,24 @@ export default function PostDetail() {
         title="댓글이 없습니다"
         description="첫 댓글을 작성해보세요"
       />
+    );
+  }
+
+  if (commentsError) {
+    commentContent = (
+      <ContentState
+        compact
+        tone="danger"
+        icon="pi-exclamation-triangle"
+        title="댓글을 불러오지 못했습니다"
+        description="잠시 후 다시 시도해주세요"
+      />
+    );
+  }
+
+  if (commentsLoading) {
+    commentContent = (
+      <ContentState compact icon="pi-comments" title="댓글을 불러오는 중입니다" description="" />
     );
   }
 
@@ -263,7 +338,7 @@ export default function PostDetail() {
     </section>
   );
 
-  if (notFound) {
+  if (notFound || error) {
     commentSection = null;
   }
 
@@ -282,14 +357,14 @@ export default function PostDetail() {
         visible={showDeleteDialog}
         header="이 글을 삭제할까요?"
         draggable={false}
-        onHide={() => setShowDeleteDialog(false)}
+        onHide={closeDeleteDialog}
         footer={
           <>
             <Button
               type="button"
               label="취소"
               severity="help"
-              onClick={() => setShowDeleteDialog(false)}
+              onClick={closeDeleteDialog}
             />
             <Button
               type="button"

@@ -54,8 +54,18 @@ export default function PostList() {
     };
   }, []);
 
-  const getCommentCount = (postId) =>
-    comments.filter((comment) => comment.postId === postId).length;
+  const commentCountByPostId = {};
+  comments.forEach((comment) => {
+    if (commentCountByPostId[comment.postId]) {
+      commentCountByPostId[comment.postId] = commentCountByPostId[comment.postId] + 1;
+    } else {
+      commentCountByPostId[comment.postId] = 1;
+    }
+  });
+
+  const getCommentCount = (postId) => {
+    return commentCountByPostId[postId] || 0;
+  };
 
   const searched = posts.filter((post) => {
     const word = keyword.toLowerCase();
@@ -91,9 +101,9 @@ export default function PostList() {
   if (endPage > totalPages) {
     endPage = totalPages;
     startPage = endPage - pageWindow + 1;
-    if (startPage < 1) {
-      startPage = 1;
-    }
+  }
+  if (startPage < 1) {
+    startPage = 1;
   }
   const pageNumbers = [];
   for (let p = startPage; p <= endPage; p++) {

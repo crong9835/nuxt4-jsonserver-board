@@ -1,11 +1,15 @@
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function AppHeader() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
+
+  useEffect(() => {
+    setKeyword(searchParams.get('q') || '');
+  }, [searchParams]);
 
   const handleSearch = (event) => {
     event.preventDefault();
